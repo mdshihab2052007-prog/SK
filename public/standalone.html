@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tk-Shield by Silver Kinen – টাকা শিল্ড</title>
+  <meta name="description" content="টাকা শিল্ড (Tk-Shield) – Free inflation loss calculator and daily micro-savings tool built for Silver Kinen (https://silverkinen.com).">
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            slate: {
+              850: '#151f33',
+              950: '#0b0f19'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons via unpkg -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+    }
+    .font-bengali {
+      font-family: 'Hind Siliguri', sans-serif;
+    }
+    .silver-gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-[#0f172a] text-slate-100 min-h-screen flex flex-col pb-24 select-none">
+
+  <!-- TOP TICKER -->
+  <div class="bg-gradient-to-r from-cyan-950/60 via-slate-900 to-emerald-950/60 border-b border-slate-800/80 py-1.5 px-4 text-xs">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span class="text-slate-400">রূপার বাজারদর: <strong class="text-slate-200">৳১১৮/গ্রাম</strong> (৯৯৯.০)</span>
+      </div>
+      <a href="https://silverkinen.com" target="_blank" class="text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1">
+        <span>silverkinen.com</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-30 px-4 py-3">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <img id="app-logo" src="https://silverkinen.com/favicon.ico" class="h-8 w-8 rounded-lg p-0.5 bg-slate-800 border border-slate-700" alt="Silver Kinen Logo" onerror="this.style.display='none'">
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-lg font-bold text-white silver-gradient-text tracking-tight">Tk-Shield</h1>
+            <span class="text-xs text-slate-400 font-bengali">(টাকা শিল্ড)</span>
+          </div>
+          <p id="app-subtitle" class="text-[11px] text-slate-400 font-bengali">আপনার জমানো টাকার ক্রয়ক্ষমতা রক্ষা করুন</p>
+        </div>
+      </div>
+
+      <!-- Language Toggle -->
+      <button id="lang-toggle-btn" class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-semibold text-cyan-400 hover:bg-slate-700 transition">
+        English
+      </button>
+    </div>
+  </header>
+
+  <!-- ADD TO HOME SCREEN PWA BANNER -->
+  <div id="pwa-banner" class="bg-slate-850 border-b border-cyan-900/40 px-4 py-2 text-xs">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2 text-slate-300">
+        <i data-lucide="smartphone" class="w-4 h-4 text-cyan-400"></i>
+        <span>হোম স্ক্রিনে রাখুন দ্রুত প্রতিদিনের সেভিংসের জন্য</span>
+      </div>
+      <button onclick="document.getElementById('pwa-banner').style.display='none'" class="text-slate-400 hover:text-white text-xs">✕</button>
+    </div>
+  </div>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main class="max-w-md mx-auto w-full px-4 py-5 flex-1 space-y-6">
+
+    <!-- TAB 1: INFLATION LEAKAGE CALCULATOR -->
+    <section id="section-calculator" class="space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400">
+            <i data-lucide="trending-down" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h2 id="calc-heading" class="font-bold text-base text-white">ইনফ্লেশন লস ক্যালকুলেটর</h2>
+            <p class="text-xs text-slate-400 font-bengali">ক্যাশ অলস রাখলে কী পরিমাণ অদৃশ্য ক্ষতি হয় দেখুন</p>
+          </div>
+        </div>
+
+        <!-- Cash Input -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs">
+            <label class="text-slate-300 font-medium">ক্যাশ টাকার পরিমাণ (BDT)</label>
+            <span id="cash-amount-display" class="font-bold text-cyan-400 font-mono">৳১০,০০০</span>
+          </div>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">৳</span>
+            <input id="input-cash-amount" type="number" value="10000" step="500" class="w-full pl-8 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono font-bold text-base outline-none focus:border-cyan-500">
+          </div>
+          <!-- Preset buttons -->
+          <div class="flex gap-1.5 pt-1">
+            <button onclick="setAmount(5000)" class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-300">৳৫,০০০</button>
+            <button onclick="setAmount(10000)" class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-300">৳১০,০০০</button>
+            <button onclick="setAmount(25000)" class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-300">৳২৫,০০০</button>
+            <button onclick="setAmount(50000)" class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-300">৳৫০,০০০</button>
+          </div>
+        </div>
+
+        <!-- Tenure Selector -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between items-center text-xs text-slate-300 font-medium">
+            <span>সময়কাল নির্বাচন করুন</span>
+            <span id="tenure-active-badge" class="text-cyan-400 font-mono font-bold">১ বছর</span>
+          </div>
+          <div class="grid grid-cols-5 gap-1.5" id="tenure-group">
+            <button onclick="setTenure(1, this)" class="py-2 text-center rounded-xl border border-slate-800 bg-slate-800/60 text-xs font-semibold text-slate-300">১ মাস</button>
+            <button onclick="setTenure(3, this)" class="py-2 text-center rounded-xl border border-slate-800 bg-slate-800/60 text-xs font-semibold text-slate-300">৩ মাস</button>
+            <button onclick="setTenure(6, this)" class="py-2 text-center rounded-xl border border-slate-800 bg-slate-800/60 text-xs font-semibold text-slate-300">৬ মাস</button>
+            <button onclick="setTenure(12, this)" class="py-2 text-center rounded-xl border border-cyan-500 bg-cyan-950 text-xs font-semibold text-cyan-300">১ বছর</button>
+            <button onclick="toggleCustomTenure(this)" class="py-2 text-center rounded-xl border border-slate-800 bg-slate-800/60 text-xs font-semibold text-slate-300">কাস্টম বছর</button>
+          </div>
+          <div id="custom-tenure-box" class="hidden mt-2 p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+            <label class="text-[11px] text-slate-400 block font-medium">কাস্টম বছর লিখুন (১০ বছর বা তার বেশি):</label>
+            <div class="flex items-center gap-2">
+              <input id="input-custom-years" type="number" min="1" max="100" value="10" oninput="setCustomYears(this.value)" class="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-sm outline-none">
+              <span class="text-xs text-slate-400 whitespace-nowrap">বছর</span>
+              <button onclick="setCustomYears(10)" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300">১০Y</button>
+              <button onclick="setCustomYears(20)" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300">২০Y</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leakage Output Highlight Card -->
+      <div class="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+        <div class="p-4 rounded-xl bg-red-950/40 border border-red-800/40 space-y-1.5">
+          <div class="text-xs text-red-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+            <span>মুদ্রাস্ফীতি ক্ষতি সতর্কতা</span>
+          </div>
+          <h3 id="calc-loss-alert" class="text-base font-bold text-red-100 font-bengali leading-snug">
+            আপনার ৳১০,০০০ অলস টাকা ১ বছরে ৳৮৫০ ক্রয়ক্ষমতা হারাবে!
+          </h3>
+          <p id="calc-loss-equiv" class="text-xs text-slate-300 pt-1 font-bengali">
+            এই ক্ষতি প্রায় ১০ কেজি চাল বা ২০ হালি ডিমের সমান মূল্য ক্ষয়!
+          </p>
+        </div>
+
+        <!-- Silver Protection Metric -->
+        <div class="p-4 rounded-xl bg-slate-850/80 border border-slate-700/80 space-y-2">
+          <div class="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i>
+            <span>সিলভার কিনেন সুরক্ষা মেটায়ার</span>
+          </div>
+          <p id="calc-silver-metric" class="text-xs sm:text-sm text-slate-200 font-bengali leading-relaxed">
+            এই টাকা সিলভার কিনেন-এ রূপায় সংরক্ষণ করলে আপনি পাবেন ~৮৪.৭ গ্রাম খাঁটি রুপা, যা ইনফ্লেশন প্রতিরোধ করবে।
+          </p>
+          <button onclick="switchTab('saver')" class="w-full mt-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md">
+            <span>এই টাকা রূপায় শিল্ড করুন</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: DAILY MICRO-SAVER -->
+    <section id="section-saver" class="space-y-4 hidden">
+      <!-- Top Metrics -->
+      <div class="grid grid-cols-3 gap-2">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
+          <div class="text-[10px] text-slate-400">মোট জমানো</div>
+          <div id="stat-total-bdt" class="font-mono font-bold text-white text-base">৳০</div>
+        </div>
+        <div class="bg-slate-900 border border-cyan-800/40 rounded-xl p-3 text-center">
+          <div class="text-[10px] text-cyan-300">রূপার ওজন</div>
+          <div id="stat-total-silver" class="font-mono font-bold text-cyan-300 text-base">০.০ g</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
+          <div class="text-[10px] text-amber-400">স্ট্রিক</div>
+          <div id="stat-streak" class="font-mono font-bold text-amber-400 text-base">🔥 ১ দিন</div>
+        </div>
+      </div>
+
+      <!-- 10-Second Live Undo Banner -->
+      <div id="saver-undo-banner" class="hidden p-4 rounded-2xl bg-slate-900 border-2 border-cyan-500 shadow-xl space-y-2">
+        <div class="flex items-center justify-between">
+          <div>
+            <div id="saver-undo-title" class="font-bold text-white text-xs sm:text-sm">⚡ ৳৫০ ভল্টে সংরক্ষিত হয়েছে!</div>
+            <div id="saver-undo-sub" class="text-[11px] text-slate-400">১০ সেকেন্ডের মধ্যে বাতিল (Undo) করতে পারেন</div>
+          </div>
+          <button onclick="undoLastSave()" class="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow">
+            Undo (বাতিল)
+          </button>
+        </div>
+        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+          <div id="saver-undo-bar" class="bg-cyan-400 h-full w-full transition-all duration-1000 ease-linear"></div>
+        </div>
+      </div>
+
+      <!-- Quick Saver Form -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="plus-circle" class="w-5 h-5 text-cyan-400"></i>
+            <h2 class="font-bold text-base text-white">১০-সেকেন্ড দৈনিক সেভিংস লগার</h2>
+          </div>
+          <span class="text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded-full font-bold">1-TAP SAVE</span>
+        </div>
+
+        <div class="text-[11px] text-slate-400">নিচের খরচে ক্লিক করলেই ১-সেকেন্ডে সরাসরি রূপার ভল্টে জমা হবে:</div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="selectSaverPreset(20, 'রিকশা ভাড়া')" class="p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-cyan-500 text-left transition-all hover:scale-[1.02]">
+            <div class="flex justify-between items-center">
+              <div class="font-bold text-white">৳২০</div>
+              <span class="text-[10px] text-cyan-400 font-bold">⚡ ১-ট্যাপে সেভ</span>
+            </div>
+            <div class="text-xs text-slate-400">রিকশা ভাড়া (~০.০৪g)</div>
+          </button>
+          <button onclick="selectSaverPreset(50, 'বিকেলের স্ন্যাকস')" class="p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-cyan-500 text-left transition-all hover:scale-[1.02]">
+            <div class="flex justify-between items-center">
+              <div class="font-bold text-white">৳৫০</div>
+              <span class="text-[10px] text-cyan-400 font-bold">⚡ ১-ট্যাপে সেভ</span>
+            </div>
+            <div class="text-xs text-slate-400">স্ন্যাকস (~০.১১g)</div>
+          </button>
+          <button onclick="selectSaverPreset(100, 'কফি বা চা')" class="p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-cyan-500 text-left transition-all hover:scale-[1.02]">
+            <div class="flex justify-between items-center">
+              <div class="font-bold text-white">৳১০০</div>
+              <span class="text-[10px] text-cyan-400 font-bold">⚡ ১-ট্যাপে সেভ</span>
+            </div>
+            <div class="text-xs text-slate-400">কফি (~০.২২g)</div>
+          </button>
+          <button onclick="selectSaverPreset(200, 'কেনাকাটা সেভ')" class="p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-cyan-500 text-left transition-all hover:scale-[1.02]">
+            <div class="flex justify-between items-center">
+              <div class="font-bold text-white">৳২০০</div>
+              <span class="text-[10px] text-cyan-400 font-bold">⚡ ১-ট্যাপে সেভ</span>
+            </div>
+            <div class="text-xs text-slate-400">শপিং (~০.৪৪g)</div>
+          </button>
+        </div>
+
+        <div class="pt-2 border-t border-slate-800 space-y-2">
+          <label class="text-xs text-slate-400 block mb-1">বা কাস্টম পরিমাণ (BDT):</label>
+          <input id="input-saver-amount" type="number" placeholder="যেমন: ১৫০" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-sm outline-none">
+          <button onclick="handleSaveAndShield()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-400 text-slate-950 font-bold text-sm shadow-lg flex items-center justify-center gap-2">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+            <span>Save & Shield (শিল্ড করুন)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Logs -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2">
+        <h3 class="text-xs font-bold text-slate-300">সাম্প্রতিক জমানো ইতিহাস</h3>
+        <div id="saver-logs-container" class="space-y-1.5 max-h-48 overflow-y-auto text-xs text-slate-400">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: VIRTUAL VAULT -->
+    <section id="section-vault" class="space-y-4 hidden">
+      <div class="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-6 text-center space-y-3">
+        <div class="text-xs font-semibold text-cyan-400 uppercase">ভার্চুয়াল ভল্ট</div>
+        <div id="vault-silver-display" class="text-4xl font-mono font-black text-white">০.০ g</div>
+        <p class="text-xs text-slate-400">৯৯৯ খাঁটি রূপার সুরক্ষা ব্যালেন্স</p>
+
+        <!-- Milestone Progress -->
+        <div class="pt-3 space-y-1.5 text-left">
+          <div class="flex justify-between text-xs text-slate-300">
+            <span>মাইলস্টোন: ৫ গ্রাম রূপা (৳৫৯০)</span>
+            <span id="vault-progress-percent" class="font-mono text-cyan-400 font-bold">০%</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+            <div id="vault-progress-bar" class="h-full bg-cyan-400 rounded-full" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <button onclick="openBookingModal()" class="w-full mt-3 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-400 text-slate-950 font-bold text-xs shadow-lg flex items-center justify-center gap-1.5">
+          <span>Silver Kinen-এ লক ইন করুন (bKash/Nagad)</span>
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- HIGH-CONVERSION CTA BANNER -->
+    <section class="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-700 rounded-2xl p-5 space-y-3 shadow-xl">
+      <h3 class="font-bold text-base text-white font-bengali">
+        আপনার জমানো মাইক্রো-সেভিংস দিয়ে বাস্তব রূপা বুক করুন
+      </h3>
+      <p class="text-xs text-slate-300 font-bengali">
+        ৯৯৯ খাঁটি সিলভার গ্রেইন (Silver grain) সরাসরি আপনার ঠিকানায় পৌঁছে দিবে Silver Kinen।
+      </p>
+      <button onclick="openBookingModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-400 text-slate-950 font-extrabold text-sm shadow-md flex items-center justify-center gap-2">
+        <i data-lucide="credit-card" class="w-4 h-4"></i>
+        <span>Silver Kinen-এ লক ইন করুন (bKash/Nagad)</span>
+      </button>
+    </section>
+
+  </main>
+
+  <!-- BOOKING MODAL -->
+  <div id="booking-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full space-y-4 text-slate-200">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <h3 class="font-bold text-white text-base">বাস্তব খাঁটি রূপা বুকিং</h3>
+        <button onclick="closeBookingModal()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+
+      <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-xs space-y-2">
+        <div class="flex justify-between">
+          <span class="text-slate-400">মোট সেভিংস:</span>
+          <span id="modal-total-bdt" class="font-bold text-white">৳১০,০০০</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">রূপার পরিমাণ:</span>
+          <span id="modal-total-grams" class="font-bold text-cyan-300">~৮৪.৭ g</span>
+        </div>
+      </div>
+
+      <textarea id="modal-summary-text" readonly rows="3" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-300 resize-none"></textarea>
+
+      <div class="space-y-2">
+        <button onclick="copyModalSummary()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-medium text-xs flex items-center justify-center gap-1.5">
+          <i data-lucide="copy" class="w-3.5 h-3.5 text-cyan-400"></i>
+          <span id="copy-btn-label">সারাংশ কপি করুন (WhatsApp/bKash)</span>
+        </button>
+
+        <a href="https://silverkinen.com" target="_blank" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5">
+          <span>Silver Kinen ওয়েবসাইটে যান</span>
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAVIGATION BAR (Mobile-First) -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 border-t border-slate-800 backdrop-blur py-2 px-4">
+    <div class="max-w-md mx-auto grid grid-cols-3 gap-1">
+      <button onclick="switchTab('calculator')" id="nav-btn-calculator" class="flex flex-col items-center py-1 text-cyan-400 text-xs font-semibold">
+        <i data-lucide="trending-down" class="w-5 h-5 mb-0.5"></i>
+        <span>লস ক্যালকুলেটর</span>
+      </button>
+      <button onclick="switchTab('saver')" id="nav-btn-saver" class="flex flex-col items-center py-1 text-slate-400 text-xs font-medium">
+        <i data-lucide="plus-circle" class="w-5 h-5 mb-0.5"></i>
+        <span>দৈনিক সেভার</span>
+      </button>
+      <button onclick="switchTab('vault')" id="nav-btn-vault" class="flex flex-col items-center py-1 text-slate-400 text-xs font-medium">
+        <i data-lucide="shield" class="w-5 h-5 mb-0.5"></i>
+        <span>আমার ভল্ট</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    const SILVER_RATE = 452; // ৳452 per gram (live rate from silverkinen.com)
+    const ANNUAL_INFLATION = 0.085; // 8.5%
+    let currentLang = 'bn';
+    let currentAmount = 10000;
+    let currentMonths = 12;
+    let entries = JSON.parse(localStorage.getItem('tk_shield_entries') || '[]');
+
+    const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    function toBnNum(n) {
+      return String(n).replace(/[0-9]/g, d => bengaliDigits[parseInt(d, 10)]);
+    }
+
+    function calculateLoss(amount, months) {
+      const factor = Math.pow(1 + ANNUAL_INFLATION, months / 12);
+      const remaining = amount / factor;
+      const loss = amount - remaining;
+      return { loss: Math.round(loss), remaining: Math.round(remaining) };
+    }
+
+    function getTenureText(m) {
+      if (m === 1) return currentLang === 'bn' ? '১ মাস' : '1 Month';
+      if (m === 3) return currentLang === 'bn' ? '৩ মাস' : '3 Months';
+      if (m === 6) return currentLang === 'bn' ? '৬ মাস' : '6 Months';
+      if (m === 12) return currentLang === 'bn' ? '১ বছর' : '1 Year';
+      if (m === 24) return currentLang === 'bn' ? '২ বছর' : '2 Years';
+      if (m % 12 === 0) {
+        const yrs = m / 12;
+        return currentLang === 'bn' ? `${toBnNum(yrs)} বছর` : `${yrs} Years`;
+      }
+      const yrs = (m / 12).toFixed(1);
+      return currentLang === 'bn' ? `${toBnNum(yrs)} বছর` : `${yrs} Years`;
+    }
+
+    function updateCalculator() {
+      const { loss } = calculateLoss(currentAmount, currentMonths);
+      const grams = (currentAmount / SILVER_RATE).toFixed(1);
+      const tenureText = getTenureText(currentMonths);
+
+      const activeBadge = document.getElementById('tenure-active-badge');
+      if (activeBadge) activeBadge.textContent = tenureText;
+
+      document.getElementById('cash-amount-display').textContent = '৳' + (currentLang === 'bn' ? toBnNum(currentAmount.toLocaleString()) : currentAmount.toLocaleString());
+
+      if (currentLang === 'bn') {
+        document.getElementById('calc-loss-alert').textContent = 
+          `আপনার ৳${toBnNum(currentAmount.toLocaleString())} অলস টাকা ${tenureText}-এ ৳${toBnNum(loss.toLocaleString())} ক্রয়ক্ষমতা হারাবে!`;
+        document.getElementById('calc-silver-metric').textContent = 
+          `এই টাকা সিলভার কিনেন-এ রূপায় সংরক্ষণ করলে আপনি পাবেন ~${toBnNum(grams)} গ্রাম খাঁটি সিলভার গ্রেইন, যা ইনফ্লেশন প্রতিরোধ করবে।`;
+      } else {
+        document.getElementById('calc-loss-alert').textContent = 
+          `Your ৳${currentAmount.toLocaleString()} idle cash will lose ৳${loss.toLocaleString()} in purchasing power over ${tenureText}!`;
+        document.getElementById('calc-silver-metric').textContent = 
+          `Shielding this money in pure silver grain gives you ~${grams}g 999 fine silver, fully protecting your purchasing power.`;
+      }
+    }
+
+    function setAmount(val) {
+      currentAmount = val;
+      document.getElementById('input-cash-amount').value = val;
+      updateCalculator();
+    }
+
+    document.getElementById('input-cash-amount').addEventListener('input', (e) => {
+      currentAmount = parseInt(e.target.value, 10) || 0;
+      updateCalculator();
+    });
+
+    function setTenure(m, btn) {
+      currentMonths = m;
+      document.getElementById('custom-tenure-box').classList.add('hidden');
+      const buttons = document.querySelectorAll('#tenure-group button');
+      buttons.forEach(b => {
+        b.className = "py-2 text-center rounded-xl border border-slate-800 bg-slate-800/60 text-xs font-semibold text-slate-300";
+      });
+      if (btn) btn.className = "py-2 text-center rounded-xl border border-cyan-500 bg-cyan-950 text-xs font-semibold text-cyan-300";
+      updateCalculator();
+    }
+
+    function toggleCustomTenure(btn) {
+      const box = document.getElementById('custom-tenure-box');
+      box.classList.remove('hidden');
+      const buttons = document.querySelectorAll('#tenure-group button');
+      buttons.forEach(b => {
+        b.className = "py-2 text-center rounded-xl border border-slate-800 bg-slate-800/60 text-xs font-semibold text-slate-300";
+      });
+      btn.className = "py-2 text-center rounded-xl border border-cyan-500 bg-cyan-950 text-xs font-semibold text-cyan-300";
+      const yrs = parseInt(document.getElementById('input-custom-years').value, 10) || 10;
+      setCustomYears(yrs);
+    }
+
+    function setCustomYears(yrs) {
+      const y = Math.max(1, Math.min(100, parseInt(yrs, 10) || 1));
+      document.getElementById('input-custom-years').value = y;
+      currentMonths = y * 12;
+      updateCalculator();
+    }
+
+    let undoTimer = null;
+    let undoSecs = 10;
+    let lastSavedId = null;
+
+    function selectSaverPreset(amount, note) {
+      const entry = {
+        id: Date.now().toString(),
+        amount: amount,
+        silverGrams: Math.round((amount / SILVER_RATE) * 100) / 100,
+        timestamp: Date.now(),
+        note: note
+      };
+      entries.unshift(entry);
+      lastSavedId = entry.id;
+      localStorage.setItem('tk_shield_entries', JSON.stringify(entries));
+      updateSaverUI();
+      trigger10SecondUndo(amount, note);
+    }
+
+    function trigger10SecondUndo(amount, note) {
+      if (undoTimer) clearInterval(undoTimer);
+      const banner = document.getElementById('saver-undo-banner');
+      const title = document.getElementById('saver-undo-title');
+      const sub = document.getElementById('saver-undo-sub');
+      const bar = document.getElementById('saver-undo-bar');
+
+      banner.classList.remove('hidden');
+      const grams = (amount / SILVER_RATE).toFixed(2);
+      title.textContent = `⚡ ৳${currentLang === 'bn' ? toBnNum(amount) : amount} (${currentLang === 'bn' ? toBnNum(grams) : grams}g রূপা) মাত্র ১-সেকেন্ডে ভল্টে শিল্ড হয়েছে!`;
+      undoSecs = 10;
+      sub.textContent = `১০ সেকেন্ডের মধ্যে বাতিল (Undo) করতে পারেন — বাকি আছে ১০ সেকেন্ড`;
+      bar.style.width = '100%';
+
+      undoTimer = setInterval(() => {
+        undoSecs--;
+        bar.style.width = (undoSecs * 10) + '%';
+        sub.textContent = `১০ সেকেন্ডের মধ্যে বাতিল (Undo) করতে পারেন — বাকি আছে ${toBnNum(undoSecs)} সেকেন্ড`;
+        if (undoSecs <= 0) {
+          clearInterval(undoTimer);
+          banner.classList.add('hidden');
+        }
+      }, 1000);
+    }
+
+    function undoLastSave() {
+      if (undoTimer) clearInterval(undoTimer);
+      if (entries.length > 0) {
+        entries.shift();
+        localStorage.setItem('tk_shield_entries', JSON.stringify(entries));
+        updateSaverUI();
+      }
+      document.getElementById('saver-undo-banner').classList.add('hidden');
+    }
+
+    function handleSaveAndShield() {
+      const val = parseInt(document.getElementById('input-saver-amount').value, 10);
+      if (!val || val <= 0) return;
+      const entry = {
+        id: Date.now().toString(),
+        amount: val,
+        silverGrams: Math.round((val / SILVER_RATE) * 100) / 100,
+        timestamp: Date.now(),
+        note: 'কাস্টম সেভিংস'
+      };
+      entries.unshift(entry);
+      lastSavedId = entry.id;
+      localStorage.setItem('tk_shield_entries', JSON.stringify(entries));
+      document.getElementById('input-saver-amount').value = '';
+      updateSaverUI();
+      trigger10SecondUndo(val, 'কাস্টম সেভিংস');
+    }
+
+    function updateSaverUI() {
+      const total = entries.reduce((s, e) => s + e.amount, 0);
+      const totalGrams = (total / SILVER_RATE).toFixed(1);
+
+      document.getElementById('stat-total-bdt').textContent = '৳' + (currentLang === 'bn' ? toBnNum(total) : total);
+      document.getElementById('stat-total-silver').textContent = (currentLang === 'bn' ? toBnNum(totalGrams) : totalGrams) + ' g';
+      document.getElementById('vault-silver-display').textContent = (currentLang === 'bn' ? toBnNum(totalGrams) : totalGrams) + ' g';
+
+      // Milestone progress to 5g
+      const pct = Math.min(100, Math.round((parseFloat(totalGrams) / 5) * 100));
+      document.getElementById('vault-progress-percent').textContent = (currentLang === 'bn' ? toBnNum(pct) : pct) + '%';
+      document.getElementById('vault-progress-bar').style.width = pct + '%';
+
+      // Logs
+      const container = document.getElementById('saver-logs-container');
+      if (entries.length === 0) {
+        container.innerHTML = `<div class="py-3 text-center text-slate-500">এখনও কোনো সঞ্চয় এন্ট্রি নেই।</div>`;
+      } else {
+        container.innerHTML = entries.slice(0, 5).map(e => `
+          <div class="flex justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+            <span>+৳${currentLang === 'bn' ? toBnNum(e.amount) : e.amount}</span>
+            <span class="text-cyan-300">~${currentLang === 'bn' ? toBnNum(e.silverGrams) : e.silverGrams}g</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function switchTab(tabId) {
+      document.getElementById('section-calculator').classList.add('hidden');
+      document.getElementById('section-saver').classList.add('hidden');
+      document.getElementById('section-vault').classList.add('hidden');
+
+      document.getElementById('nav-btn-calculator').className = "flex flex-col items-center py-1 text-slate-400 text-xs font-medium";
+      document.getElementById('nav-btn-saver').className = "flex flex-col items-center py-1 text-slate-400 text-xs font-medium";
+      document.getElementById('nav-btn-vault').className = "flex flex-col items-center py-1 text-slate-400 text-xs font-medium";
+
+      document.getElementById('section-' + tabId).classList.remove('hidden');
+      document.getElementById('nav-btn-' + tabId).className = "flex flex-col items-center py-1 text-cyan-400 text-xs font-semibold";
+    }
+
+    function openBookingModal() {
+      const total = entries.reduce((s, e) => s + e.amount, 0) || currentAmount;
+      const grams = (total / SILVER_RATE).toFixed(1);
+      document.getElementById('modal-total-bdt').textContent = '৳' + (currentLang === 'bn' ? toBnNum(total) : total);
+      document.getElementById('modal-total-grams').textContent = '~' + (currentLang === 'bn' ? toBnNum(grams) : grams) + 'g';
+      
+      const summary = `🛡️ Tk-Shield সঞ্চয় সারাংশ:\n• মোট জমানো: ৳${total}\n• রূপা লক্ষ্য: ~${grams}g (৯৯৯.০ খাঁটি রূপা)\n• পেমেন্ট: bKash/Nagad\n• Silver Kinen (https://silverkinen.com)`;
+      document.getElementById('modal-summary-text').value = summary;
+      document.getElementById('booking-modal').classList.remove('hidden');
+    }
+
+    function closeBookingModal() {
+      document.getElementById('booking-modal').classList.add('hidden');
+    }
+
+    function copyModalSummary() {
+      const text = document.getElementById('modal-summary-text').value;
+      navigator.clipboard.writeText(text);
+      document.getElementById('copy-btn-label').textContent = 'কপি সম্পন্ন হয়েছে!';
+      setTimeout(() => {
+        document.getElementById('copy-btn-label').textContent = 'সারাংশ কপি করুন (WhatsApp/bKash)';
+      }, 2000);
+    }
+
+    document.getElementById('lang-toggle-btn').addEventListener('click', () => {
+      currentLang = currentLang === 'bn' ? 'en' : 'bn';
+      document.getElementById('lang-toggle-btn').textContent = currentLang === 'bn' ? 'English' : 'বাংলা';
+      document.getElementById('app-subtitle').textContent = currentLang === 'bn' ? 'আপনার জমানো টাকার ক্রয়ক্ষমতা রক্ষা করুন' : 'Shield Your Savings From Inflation';
+      updateCalculator();
+      updateSaverUI();
+    });
+
+    // Init
+    updateCalculator();
+    updateSaverUI();
+    lucide.createIcons();
+  </script>
+</body>
+</html>

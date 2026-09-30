@@ -1,0 +1,32 @@
+{
+  "id": "/",
+  "name": "Tk-Shield by Silver Kinen",
+  "short_name": "Tk-Shield",
+  "description": "Shield your savings from inflation with 999 pure silver daily micro-savings via Silver Kinen.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#020626",
+  "theme_color": "#020626",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

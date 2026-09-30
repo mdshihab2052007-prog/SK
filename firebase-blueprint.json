@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Registered user profile and preferences",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "User display name" },
+        "email": { "type": "string", "description": "User email address" },
+        "photoURL": { "type": "string", "description": "User profile photo URL" },
+        "createdAt": { "type": "string", "description": "Account creation timestamp" },
+        "lastLoginAt": { "type": "string", "description": "Last login timestamp" },
+        "lang": { "type": "string", "description": "Preferred language (bn or en)" }
+      },
+      "required": ["uid", "email"]
+    },
+    "SavingEntry": {
+      "title": "SavingEntry",
+      "description": "A micro-saving transaction log protected in silver",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique saving entry ID" },
+        "userId": { "type": "string", "description": "Owner user UID" },
+        "amount": { "type": "number", "description": "Saved cash amount in BDT" },
+        "silverGrams": { "type": "number", "description": "Equivalent 999 fine silver weight in grams" },
+        "category": { "type": "string", "description": "Saving category or expense prevented" },
+        "note": { "type": "string", "description": "Personal note or description" },
+        "timestamp": { "type": "number", "description": "Unix millisecond timestamp" }
+      },
+      "required": ["id", "userId", "amount", "silverGrams", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User account document containing identity and preferences"
+    },
+    "/users/{userId}/savings/{savingId}": {
+      "schema": "SavingEntry",
+      "description": "User's micro-savings transaction logs"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Tk-Shield by Silver Kinen",
+  "description": "টাকা শিল্ড (Tk-Shield) – Free Bangladesh inflation loss calculator and daily micro-savings tool to protect your money with 999 pure silver via Silver Kinen.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
